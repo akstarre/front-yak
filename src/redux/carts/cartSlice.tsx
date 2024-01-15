@@ -24,7 +24,15 @@ const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
 export const postCart = createAsyncThunk(
   "cart/createCart",
   async (cart: Cart): Promise<void> => {
-    const response = await axios.post(`${springBootUrl}/api/cart`, cart);
+    const response = await axios.post(
+      `${springBootUrl}/api/cart`,
+      JSON.stringify(cart),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return response.data;
   }
 );

@@ -2,11 +2,19 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { isAuthenticated } from "../../utils/Authentication";
+import { CheckoutList } from "./CheckoutList";
+import { UserCheckoutInformation } from "./UserCheckoutInformation";
+import BlueButton from "./BlueButton";
+import { useDispatch } from "react-redux";
+import { postCart } from "@/redux/carts/cartSlice";
+import { Cart } from "@/types/cart";
+import { AppDispatch } from "@/redux/store";
 
 const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
 
 const styles = {
-  pageContainer: "flex items-start justify-center h-screen w-full bg-secondary",
+  pageContainer:
+    "flex flex-col items-center justify-start h-screen w-full bg-secondary",
   cartContents:
     "text-center w-full max-w-md bg-white p-8 rounded-lg shadow-md m-4",
   checkoutList: "border-t border-black",
@@ -48,6 +56,7 @@ export const CheckoutComponent = () => {
   const [user, setUser] = useState(null);
 
   const authenticated = isAuthenticated();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const fetchUserShippingInfo = async () => {
@@ -79,38 +88,26 @@ export const CheckoutComponent = () => {
   };
 
   const onCheckout = () => {
-    // Implement checkout logic
+    if (user) {
+      const cart = {
+        id: "123456789",
+        userId: user.id,
+        products: products,
+      };
+      const response = dispatch(postCart(cart));
+    }
   };
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.cartContents}>
         <h2 className={styles.header}>Checkout</h2>
-        <div className={styles.checkoutList}>
-          {products.map((product) => {
-            return (
-              <div
-                key={`${product.productId}${product.quantity}`}
-                className={styles.checkoutListItem}
-              >
-                <div>
-                  <span className={styles.listItem}>{product.name}</span>
-                  <span className={styles.listItem}>x{product.quantity}</span>
-                </div>
-                <span className={styles.itemTotal}>
-                  ${product.quantity * product.price}
-                </span>
-              </div>
-            );
-          })}
-          <div className={styles.checkoutList}>
-            <div className={styles.checkoutListItem}>
-              <span>Total</span>
-              <span>${calculateTotal()}</span>
-            </div>
-          </div>
-        </div>
+        <CheckoutList products={products} calculateTotal={calculateTotal} />
       </div>
+      <div className={styles.cartContents}>
+        {user ? <UserCheckoutInformation user={user} /> : <div></div>}
+      </div>
+      <BlueButton onClick={onCheckout} text="Checkout" />
     </div>
   );
 };

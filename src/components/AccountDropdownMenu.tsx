@@ -24,13 +24,22 @@ export const AccountDropDownMenu = () => {
     router.refresh();
   };
 
+  const navigate = (path: string) => {
+    router.push(path);
+  };
+
   return (
     <div className={styles.dropdownContainer}>
       <div className={styles.header}>
         Welcome, <span className="text-blue-500">{username}</span>!
       </div>
       <div className={styles.buttonContainer}>
-        <button className={styles.styledButton}>Cart</button>
+        <button
+          className={styles.styledButton}
+          onClick={() => navigate("/checkout")}
+        >
+          Cart
+        </button>
         <button className={styles.styledButton}>Account Details</button>
         <button className={styles.styledButton}>Order History</button>
         <button className={styles.styledButton} onClick={() => logOut()}>

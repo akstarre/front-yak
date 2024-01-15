@@ -23,7 +23,6 @@ export default function Shop() {
     (state: RootState) => state.products
   );
   const products = items || [];
-  console.log(products, status);
   return (
     <div className={styles.pageContainer}>
       <Navbar />

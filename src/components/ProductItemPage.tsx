@@ -16,7 +16,6 @@ const styles = {
 };
 
 const ProductItemPage: React.FC<ProductItemPageProps> = ({ product }) => {
-  console.log(product);
   return (
     <div className={styles.pageContainer}>
       <div className={styles.productDiv}>

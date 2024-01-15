@@ -36,8 +36,6 @@ export const Navbar = () => {
     (state: RootState) => state.cart.cart?.products
   );
 
-  console.log(cartProducts);
-
   return (
     <div className={styles.outerContainer}>
       <div className={styles.upperNavbar}>
