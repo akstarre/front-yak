@@ -17,11 +17,14 @@ const initialState: CartState = {
 
 const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
 
-export const retrieveCartHistory = createAsyncThunk(
+export const fetchCartHistory = createAsyncThunk(
   "cart/createCart",
   async (userId: string): Promise<Cart[]> => {
     const response = await axios.get(`${springBootUrl}/api/cart/${userId}`);
-    return response.data;
+    return response.data.map((cart: any) => ({
+      ...cart,
+      products: cart.cartProducts,
+    }));
   }
 );
 
@@ -30,16 +33,16 @@ export const cartHistorySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(retrieveCartHistory.fulfilled, (state, action) => {
+    builder.addCase(fetchCartHistory.fulfilled, (state, action) => {
       state.cartHistory = action.payload;
       state.status = "succeeded";
     });
-    builder.addCase(retrieveCartHistory.rejected, (state, action) => {
+    builder.addCase(fetchCartHistory.rejected, (state, action) => {
       state.status = "failed";
       state.cartHistory = null;
       if (action.error.message) state.error = action.error.message;
     });
-    builder.addCase(retrieveCartHistory.pending, (state, action) => {
+    builder.addCase(fetchCartHistory.pending, (state, action) => {
       state.status = "loading";
       state.error = null;
     });

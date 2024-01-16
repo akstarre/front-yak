@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { isAuthenticated } from "../../utils/Authentication";
+import { fetchUserId, isAuthenticated } from "../../utils/Authentication";
 import { AvatarDropDown } from "./AvatarDropdown";
 import { useDispatch, useSelector } from "react-redux";
-import { createCart } from "@/redux/carts/cartSlice";
+import { createCart, resetCart } from "@/redux/carts/cartSlice";
 import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { RootState } from "@/redux/store";
 
@@ -25,16 +25,18 @@ const styles = {
 };
 
 export const Navbar = () => {
+  const [userId, setUserId] = useState(null);
+
   const router = useRouter();
+  const dispatch = useDispatch();
+  const userIsAuthenticated = isAuthenticated();
+  const cartUserId = useSelector((state: RootState) => state.cart.cart?.userId);
+
+  const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
+
   const navigate = (path: string) => {
     router.push(path);
   };
-
-  const dispatch = useDispatch();
-  const userIsAuthenticated = isAuthenticated();
-  const cartProducts = useSelector(
-    (state: RootState) => state.cart.cart?.products
-  );
 
   return (
     <div className={styles.outerContainer}>

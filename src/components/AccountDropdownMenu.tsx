@@ -36,12 +36,21 @@ export const AccountDropDownMenu = () => {
       <div className={styles.buttonContainer}>
         <button
           className={styles.styledButton}
-          onClick={() => navigate("/checkout")}
+          onClick={() => {
+            navigate("/checkout");
+          }}
         >
           Cart
         </button>
         <button className={styles.styledButton}>Account Details</button>
-        <button className={styles.styledButton}>Order History</button>
+        <button
+          className={styles.styledButton}
+          onClick={() => {
+            navigate("/order-history");
+          }}
+        >
+          Order History
+        </button>
         <button className={styles.styledButton} onClick={() => logOut()}>
           Log Out
         </button>

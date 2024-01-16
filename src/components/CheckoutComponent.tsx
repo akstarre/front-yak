@@ -6,8 +6,7 @@ import { CheckoutList } from "./CheckoutList";
 import { UserCheckoutInformation } from "./UserCheckoutInformation";
 import BlueButton from "./BlueButton";
 import { useDispatch, useSelector } from "react-redux";
-import { postCart } from "@/redux/carts/cartSlice";
-import { Cart } from "@/types/cart";
+import { postCart, resetCart } from "@/redux/carts/cartSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { LoginForm } from "./LoginForm";
@@ -29,40 +28,13 @@ const styles = {
   error: "text-red-400",
 };
 
-// const products = [
-//   {
-//     name: "Yak-Themed Ceramic Mug",
-//     price: 15,
-//     productId: "65981ffe2d580a513ae5acac",
-//     quantity: 4,
-//   },
-//   {
-//     name: "Yak Wool Socks",
-//     price: 20,
-//     productId: "65981ffe2d580a513ae5acbe",
-//     quantity: 6,
-//   },
-//   {
-//     name: "Yak Silhouette Sticker",
-//     price: 3,
-//     productId: "65981ffe2d580a513ae5acc4",
-//     quantity: 4,
-//   },
-//   {
-//     name: "Yak-Themed Ceramic Mug",
-//     price: 15,
-//     productId: "65981ffe2d580a513ae5acac",
-//     quantity: 4,
-//   },
-// ];
-
 export const CheckoutComponent = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState(null);
 
-  const authenticated = isAuthenticated();
+  let authenticated = isAuthenticated();
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
@@ -88,18 +60,12 @@ export const CheckoutComponent = () => {
     }
   }, [authenticated]);
 
-  const calculateTotal = () => {
-    return cart?.products.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-  };
-
   const onCheckout = () => {
     let response;
     if (cart) {
       response = dispatch(postCart(cart))
         .then((response) => {
+          dispatch(resetCart(user?.id));
           setShowSuccessModal(true);
           setTimeout(() => {
             router.push("/");
@@ -116,10 +82,7 @@ export const CheckoutComponent = () => {
       {showSuccessModal && <SuccessModal text="Order Submission" path="Home" />}
       <div className={styles.cartContents}>
         <h2 className={styles.header}>Checkout</h2>
-        <CheckoutList
-          products={cart?.products}
-          calculateTotal={calculateTotal}
-        />
+        <CheckoutList products={cart?.products} />
       </div>
       {authenticated ? (
         <>

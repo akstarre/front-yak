@@ -1,5 +1,5 @@
 import { CartProduct } from "@/types/cart";
-import { Product } from "@/types/product";
+import { calculateTotal } from "../../utils/Calculations";
 
 const styles = {
   pageContainer: "flex items-start justify-center h-screen w-full bg-secondary",
@@ -14,13 +14,10 @@ const styles = {
 
 interface CheckoutListProps {
   products: CartProduct[] | undefined;
-  calculateTotal: () => number | undefined;
 }
 
-export const CheckoutList: React.FC<CheckoutListProps> = ({
-  products,
-  calculateTotal,
-}) => {
+export const CheckoutList: React.FC<CheckoutListProps> = ({ products }) => {
+  console.log(products);
   return (
     <div className={styles.checkoutList}>
       {products?.map((product, i) => {
@@ -42,7 +39,7 @@ export const CheckoutList: React.FC<CheckoutListProps> = ({
       <div className={styles.checkoutList}>
         <div className={styles.checkoutListItem}>
           <span>Total</span>
-          <span>${calculateTotal()}</span>
+          {products && <span>${calculateTotal(products)}</span>}
         </div>
       </div>
     </div>

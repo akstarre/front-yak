@@ -24,6 +24,7 @@ const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
 export const postCart = createAsyncThunk(
   "cart/createCart",
   async (cart: Cart): Promise<void> => {
+    console.log(cart);
     const response = await axios.post(
       `${springBootUrl}/api/cart`,
       JSON.stringify(cart),
@@ -52,14 +53,13 @@ export const cartSlice = createSlice({
       }
     },
     resetCart: (state, action) => {
-      if (!state.cart || state.cart.userId !== action.payload) {
-        const userId = action.payload || null;
-        state.cart = {
-          id: uuidv4(),
-          userId: userId,
-          products: [],
-        };
-      }
+      const userId = action.payload || null;
+
+      state.cart = {
+        id: uuidv4(),
+        userId: userId,
+        products: [],
+      };
     },
     addProduct: (state, action) => {
       const { productId, quantity } = action.payload;
@@ -102,6 +102,6 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { createCart, addProduct, updateProductQuantity } =
+export const { createCart, resetCart, addProduct, updateProductQuantity } =
   cartSlice.actions;
 export default cartSlice.reducer;
