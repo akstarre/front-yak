@@ -5,10 +5,13 @@ import { isAuthenticated } from "../../utils/Authentication";
 import { CheckoutList } from "./CheckoutList";
 import { UserCheckoutInformation } from "./UserCheckoutInformation";
 import BlueButton from "./BlueButton";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { postCart } from "@/redux/carts/cartSlice";
 import { Cart } from "@/types/cart";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
+import { LoginForm } from "./LoginForm";
+import { SuccessModal } from "./SuccessModal";
 
 const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
 
@@ -22,41 +25,46 @@ const styles = {
   listItem: "mx-1",
   itemTotal: "self-end",
   header: "text-lg font-bold",
+  flexCol: "flex flex-col items-center",
+  error: "text-red-400",
 };
 
-const products = [
-  {
-    name: "Yak-Themed Ceramic Mug",
-    price: 15,
-    productId: "65981ffe2d580a513ae5acac",
-    quantity: 4,
-  },
-  {
-    name: "Yak Wool Socks",
-    price: 20,
-    productId: "65981ffe2d580a513ae5acbe",
-    quantity: 6,
-  },
-  {
-    name: "Yak Silhouette Sticker",
-    price: 3,
-    productId: "65981ffe2d580a513ae5acc4",
-    quantity: 4,
-  },
-  {
-    name: "Yak-Themed Ceramic Mug",
-    price: 15,
-    productId: "65981ffe2d580a513ae5acac",
-    quantity: 4,
-  },
-];
+// const products = [
+//   {
+//     name: "Yak-Themed Ceramic Mug",
+//     price: 15,
+//     productId: "65981ffe2d580a513ae5acac",
+//     quantity: 4,
+//   },
+//   {
+//     name: "Yak Wool Socks",
+//     price: 20,
+//     productId: "65981ffe2d580a513ae5acbe",
+//     quantity: 6,
+//   },
+//   {
+//     name: "Yak Silhouette Sticker",
+//     price: 3,
+//     productId: "65981ffe2d580a513ae5acc4",
+//     quantity: 4,
+//   },
+//   {
+//     name: "Yak-Themed Ceramic Mug",
+//     price: 15,
+//     productId: "65981ffe2d580a513ae5acac",
+//     quantity: 4,
+//   },
+// ];
 
 export const CheckoutComponent = () => {
-  //   const cart = useSelector((state: RootState) => state.cart.cart);
+  const cart = useSelector((state: RootState) => state.cart.cart);
   const [user, setUser] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [error, setError] = useState(null);
 
   const authenticated = isAuthenticated();
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserShippingInfo = async () => {
@@ -78,36 +86,57 @@ export const CheckoutComponent = () => {
     if (authenticated) {
       fetchUserShippingInfo();
     }
-  }, []);
+  }, [authenticated]);
 
   const calculateTotal = () => {
-    return products.reduce(
+    return cart?.products.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
   };
 
   const onCheckout = () => {
-    if (user) {
-      const cart = {
-        id: "123456789",
-        userId: user.id,
-        products: products,
-      };
-      const response = dispatch(postCart(cart));
+    let response;
+    if (cart) {
+      response = dispatch(postCart(cart))
+        .then((response) => {
+          setShowSuccessModal(true);
+          setTimeout(() => {
+            router.push("/");
+          }, 3000);
+        })
+        .catch((error) => {
+          setError(error);
+        });
     }
   };
 
   return (
     <div className={styles.pageContainer}>
+      {showSuccessModal && <SuccessModal text="Order Submission" path="Home" />}
       <div className={styles.cartContents}>
         <h2 className={styles.header}>Checkout</h2>
-        <CheckoutList products={products} calculateTotal={calculateTotal} />
+        <CheckoutList
+          products={cart?.products}
+          calculateTotal={calculateTotal}
+        />
       </div>
-      <div className={styles.cartContents}>
-        {user ? <UserCheckoutInformation user={user} /> : <div></div>}
-      </div>
-      <BlueButton onClick={onCheckout} text="Checkout" />
+      {authenticated ? (
+        <>
+          <div className={styles.cartContents}>
+            <UserCheckoutInformation user={user} />
+          </div>
+          <BlueButton onClick={onCheckout} text="Checkout" />
+        </>
+      ) : (
+        <div className={styles.flexCol}>
+          <h2 className={styles.header}>Login or Register to checkout</h2>
+          <div>
+            <LoginForm redirect="/checkout" />
+          </div>
+        </div>
+      )}
+      {error && <span className={styles.error}>{error}</span>}
     </div>
   );
 };

@@ -28,9 +28,13 @@ interface FormErrors {
   password?: string;
 }
 
+interface LoginFormProps {
+  redirect: string;
+}
+
 const springBootUrl = process.env.NEXT_PUBLIC_SPRING_BOOT_URL;
 
-export const LoginForm = () => {
+export const LoginForm: React.FC<LoginFormProps> = ({ redirect }) => {
   const [formData, setFormData] = useState<FormData>({
     username: "",
     password: "",
@@ -85,7 +89,7 @@ export const LoginForm = () => {
         dispatch(createCart(userId));
 
         setTimeout(() => {
-          router.push("/");
+          router.push(redirect);
         }, 3000);
       } catch (error) {
         console.error("Authentication Failed", error);

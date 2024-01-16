@@ -1,5 +1,5 @@
 interface UserCheckoutInformationProps {
-  user: User;
+  user: User | null;
 }
 
 const styles = {
@@ -15,12 +15,12 @@ export const UserCheckoutInformation: React.FC<
   return (
     <div>
       <div className={styles.userInfo}>
-        <span className={styles.listItem}>{user.fullName}</span>
+        <span className={styles.listItem}>{user?.fullName}</span>
       </div>
       <div className={styles.userInfo}>
-        <span className={styles.listItem}>{user.address}</span>
-        <span className={styles.listItem}>{user.phoneNumber}</span>
-        <span className={styles.listItem}>{user.email}</span>
+        <span className={styles.listItem}>{user?.address}</span>
+        <span className={styles.listItem}>{user?.phoneNumber}</span>
+        <span className={styles.listItem}>{user?.email}</span>
 
         <span className={styles.itemTotal}></span>
       </div>

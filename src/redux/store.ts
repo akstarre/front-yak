@@ -3,6 +3,7 @@ import productsReducer from "@/redux/products/getAllProductsSlice";
 import productsByCategoryReducer from "@/redux/products/getProductsByCategorySlice";
 import productByIdReducer from "@/redux/products/getProductByIdSlice";
 import cartReducer from "@/redux/carts/cartSlice";
+import cartHistoryReducer from "@/redux/carts/cartHistorySlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     productsByCategory: productsByCategoryReducer,
     productById: productByIdReducer,
     cart: cartReducer,
+    cartHistory: cartHistoryReducer,
   },
 });
 

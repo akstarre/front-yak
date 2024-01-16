@@ -13,8 +13,8 @@ const styles = {
 };
 
 interface CheckoutListProps {
-  products: CartProduct[];
-  calculateTotal: () => number;
+  products: CartProduct[] | undefined;
+  calculateTotal: () => number | undefined;
 }
 
 export const CheckoutList: React.FC<CheckoutListProps> = ({
@@ -23,7 +23,7 @@ export const CheckoutList: React.FC<CheckoutListProps> = ({
 }) => {
   return (
     <div className={styles.checkoutList}>
-      {products.map((product, i) => {
+      {products?.map((product, i) => {
         return (
           <div
             key={`${product.productId}${product.quantity}${i}`}

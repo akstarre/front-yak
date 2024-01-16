@@ -47,6 +47,16 @@ export const cartSlice = createSlice({
         state.cart = {
           id: uuidv4(),
           userId: userId,
+          products: state.cart.products,
+        };
+      }
+    },
+    resetCart: (state, action) => {
+      if (!state.cart || state.cart.userId !== action.payload) {
+        const userId = action.payload || null;
+        state.cart = {
+          id: uuidv4(),
+          userId: userId,
           products: [],
         };
       }

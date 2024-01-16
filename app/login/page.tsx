@@ -11,7 +11,7 @@ export default function LoginPage() {
   return (
     <div className={styles.pageContainer}>
       <Navbar />
-      <LoginForm />
+      <LoginForm redirect="/" />
       <Footer />
     </div>
   );

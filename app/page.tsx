@@ -9,7 +9,6 @@ const styles = {
   pageContainer: "flex flex-col w-full min-h-[100vh] bg-secondary",
   imageContainer: "flex justify-center items-center",
   fakeDiv: "h-[200px] w-full bg-secondary",
-  categoryDiv: "self-end",
 };
 
 export default function Home() {
@@ -25,7 +24,7 @@ export default function Home() {
           layout="intrinsic"
         />
       </div>
-      <div className={styles.categoryDiv}>
+      <div>
         <CategoryBanner />
       </div>
       <Footer />
